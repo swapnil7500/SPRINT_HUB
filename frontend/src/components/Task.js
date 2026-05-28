@@ -7,7 +7,7 @@ import DropdownMenu from "./DropdownMenu";
 // import TaskModal from "./TaskModal";
 import { useParams, useNavigate } from "react-router";
 import ProjectDropdown from "./ProjectDropdown"
-import axios from "axios";
+import api from '../api';
 import toast from "react-hot-toast";
 import TaskModal from "./TaskModal";
 
@@ -107,12 +107,13 @@ function Task() {
     const [isTaskOpen, setTaskOpen] = useState(false);
     const [taskId, setTaskId] = useState(false);
     const [title, setTitle] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     const { projectId } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!isAddTaskModalOpen || isRenderChange) {
-            axios.get(`http://localhost:9000/project/${projectId}`)
+            api.get(`/project/${projectId}`)
                 .then((res) => {
                     setTitle(res.data[0].title)
                     setColumns({
@@ -149,7 +150,7 @@ function Task() {
     }, [projectId, isAddTaskModalOpen, isRenderChange]);
 
     const updateTodo = (data) => {
-        axios.put(`http://localhost:9000/project/${projectId}/todo`, data)
+        api.put(`/project/${projectId}/todo`, data)
             .then((res) => {
             }).catch((error) => {
                 toast.error('Something went wrong')
@@ -158,7 +159,7 @@ function Task() {
 
     const handleDelete = (e, taskId) => {
         e.stopPropagation();
-        axios.delete(`http://localhost:9000/project/${projectId}/task/${taskId}`)
+        api.delete(`/project/${projectId}/task/${taskId}`)
             .then((res) => {
                 toast.success('Task is deleted')
                 setRenderChange(true)
@@ -251,7 +252,7 @@ function Task() {
                     })}
                 </div >
             </DragDropContext >
-            <AddTaskModal isAddTaskModalOpen={isAddTaskModalOpen} setAddTaskModal={setAddTaskModal} projectId={projectId} />
+            <AddTaskModal isAddTaskModalOpen={isAddTaskModalOpen} setAddTaskModal={setAddTaskModal} projectId={projectId} refreshData={setRenderChange} />
             <TaskModal isOpen={isTaskOpen} setIsOpen={setTaskOpen} id={taskId} />
         </div >
     );

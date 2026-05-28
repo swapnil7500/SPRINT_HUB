@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Popover } from '@headlessui/react'
-import axios from "axios"
+import api from '../api'
 import toast from 'react-hot-toast'
 import AddProjectModal from './AddProjectModal'
 
@@ -8,7 +8,7 @@ const ProjectDropdown = ({ id, navigate }) => {
     const [isModalOpen, setModalState] = useState(false)
     const handleDelete = async () => {
         try {
-            const data = await axios.delete(`http://localhost:9000/project/${id}`)
+            const data = await api.delete(`/project/${id}`)
             if (data.data.deletedCount > 0) {
                 toast.success('Record deleted successfully')
                 navigate('/')
