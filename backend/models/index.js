@@ -1,12 +1,16 @@
-// import { number, string } from "joi";
 import mongoose from "mongoose";
 
 const project = new mongoose.Schema({
     title: {
         type: String,
-        unique: true // `email` must be unique
     },
     description: String,
+    // ✅ Added: owner field links every project to the user who created it
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     task: [
         {
             id: Number,
@@ -24,5 +28,7 @@ const project = new mongoose.Schema({
     ]
 }, { timestamps: true })
 
+// ✅ Unique title per user (not globally unique)
+project.index({ title: 1, owner: 1 }, { unique: true })
 
 export default mongoose.model('Project', project);
